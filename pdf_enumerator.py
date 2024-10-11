@@ -2,6 +2,10 @@ import hashlib
 import os, glob
 from typing import Literal
 
+from fpdf import FPDF
+from pypdf import PdfReader, PdfWriter
+from loguru import logger
+
 
 class NumberPDF(FPDF):
     """
