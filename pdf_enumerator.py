@@ -5,10 +5,15 @@ from typing import Literal
 
 class NumberPDF(FPDF):
     """
-        Класс, который добавляет нумерацию страниц в PDF файл.
+    Класс, который добавляет нумерацию страниц в PDF файл.
     """
 
-    def __init__(self, align: Literal["R", "L", "C"] = "C", font_family: str = "Arial", font_size: int = 14):
+    def __init__(
+        self,
+        align: Literal["R", "L", "C"] = "C",
+        font_family: str = "Arial",
+        font_size: int = 14,
+    ):
         super().__init__()
         self.align = align
         self.font_family = font_family
@@ -27,7 +32,7 @@ class NumberPDF(FPDF):
 
 class PdfEnumerator:
     """
-        Класс, который добавляет нумерацию страниц в PDF файлы в указанных папках.
+    Класс, который добавляет нумерацию страниц в PDF файлы в указанных папках.
     """
 
     def __init__(self, folder_path: list[str] | str):
@@ -45,11 +50,11 @@ class PdfEnumerator:
 
             for filepath in filepaths:
                 self._enumerate_file(filepath)
-    
+
     def _enumerate_file(self, filepath: str) -> None:
         """
         добавляет нумерацию страниц в файл
-        
+
         :param filepath: путь к файлу
         """
         reader = PdfReader(filepath)
@@ -57,7 +62,11 @@ class PdfEnumerator:
         merge_writer = self._merge_pdfs(reader, temp_filepath)
         os.remove(temp_filepath)
         result_filepath = self._save_pdf(merge_writer, filepath)
-        logger.debug("Initial file hash {}, Result file hash: {}", self._get_file_hash(filepath), self._get_file_hash(result_filepath))
+        logger.debug(
+            "Initial file hash {}, Result file hash: {}",
+            self._get_file_hash(filepath),
+            self._get_file_hash(result_filepath),
+        )
 
     def _find_all_files(self, folder_path: str) -> list[str]:
         """
@@ -102,7 +111,7 @@ class PdfEnumerator:
             merge_writer.add_page(input_page)
 
         return merge_writer
-    
+
     def _save_pdf(self, merge_writer: PdfWriter, filepath: str) -> str:
         """
         сохраняет PDF файл
@@ -113,13 +122,13 @@ class PdfEnumerator:
         """
         result_dir = os.path.join(os.path.dirname(filepath), "results")
         os.makedirs(result_dir, exist_ok=True)
-        
+
         result_filepath = os.path.join(result_dir, os.path.splitext(os.path.basename(filepath))[0] + "_enumerated.pdf")
         
         with open(result_filepath, "wb") as f:
             merge_writer.write(f)
         return result_filepath
-    
+
     def _get_file_hash(self, filepath: str) -> str:
         """
         вычисляет хеш сумму файла
@@ -130,7 +139,7 @@ class PdfEnumerator:
         with open(filepath, "rb") as f:
             return hashlib.sha256(f.read()).hexdigest()
 
+
 if __name__ == "__main__":
     pdf_enumerator = PdfEnumerator("C:/Users/your_path/")
     pdf_enumerator.main()
-
